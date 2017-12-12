@@ -4,7 +4,9 @@ import { connect } from 'react-redux'
 import { fetchOneGame, fetchPlayers } from '../actions/games/fetch'
 import { connect as subscribeToWebsocket } from '../actions/websocket'
 import JoinGameDialog from '../components/games/JoinGameDialog'
-
+import Tile from '../components/Tile'
+import './Game.css'
+import {takeTile} from '../actions/games/clickTile'
 const playerShape = PropTypes.shape({
   userId: PropTypes.string.isRequired,
   pairs: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -20,17 +22,12 @@ class Game extends PureComponent {
       _id: PropTypes.string.isRequired,
       userId: PropTypes.string.isRequired,
       players: PropTypes.arrayOf(playerShape),
-      draw: PropTypes.bool,
       updatedAt: PropTypes.string.isRequired,
       createdAt: PropTypes.string.isRequired,
       started: PropTypes.bool,
       turn: PropTypes.number.isRequired,
-      cards: PropTypes.arrayOf(PropTypes.shape({
-        symbol: PropTypes.string,
-        _id: PropTypes.string,
-        won: PropTypes.bool,
-        visible: PropTypes.bool
-      }))
+      winner: PropTypes.string,
+      board: PropTypes.arrayOf( PropTypes.string),
     }),
     currentPlayer: playerShape,
     isPlayer: PropTypes.bool,
@@ -53,6 +50,13 @@ class Game extends PureComponent {
       this.props.fetchPlayers(game)
     }
   }
+  takeTile = (index) => () => {
+    const {game} = this.props
+    this.props.takeTile(game, index, this.props.currentPlayer)
+  }
+  renderTile = (value, index) => {
+  return <Tile key={index} onClick={this.takeTile(index)} value={value} />
+}
 
   render() {
     const { game } = this.props
@@ -67,11 +71,11 @@ class Game extends PureComponent {
       <div className="Game">
         <h1>Game!</h1>
         <p>{title}</p>
-
-        <h1>YOUR GAME HERE! :)</h1>
-
-        <h2>Debug Props</h2>
-        <pre>{JSON.stringify(this.props, true, 2)}</pre>
+      <div className="Board">
+      {this.props.game.board.map(this.renderTile)}
+      <p>Winner is: {this.props.game.winner}</p>
+      </div>
+      <pre>{JSON.stringify(this.props, true, 2)}</pre>
 
         <JoinGameDialog gameId={game._id} />
       </div>
@@ -95,5 +99,6 @@ const mapStateToProps = ({ currentUser, games }, { match }) => {
 export default connect(mapStateToProps, {
   subscribeToWebsocket,
   fetchOneGame,
-  fetchPlayers
+  fetchPlayers,
+  takeTile,
 })(Game)

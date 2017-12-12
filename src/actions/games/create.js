@@ -18,6 +18,7 @@ export default () => {
       .then(() => {
         dispatch({ type: APP_DONE_LOADING })
         dispatch({ type: LOAD_SUCCESS })
+
       })
       .catch((error) => {
         dispatch({ type: APP_DONE_LOADING })

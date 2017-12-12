@@ -47,6 +47,7 @@ class Lobby extends PureComponent {
       .filter(n => !!n)
       .join(' vs ')
 
+
     return (
       <MenuItem
         key={index}

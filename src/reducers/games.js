@@ -5,13 +5,15 @@ import {
   GAME_UPDATED,
   GAME_REMOVED,
   GAME_PLAYERS_UPDATED,
+  TAKE_TILE,
 } from '../actions/games/subscribe'
+
 
 export default (state = [], { type, payload } = {}) => {
   switch (type) {
+
     case FETCHED_GAMES :
       return [ ...payload ]
-
     case FETCHED_ONE_GAME :
       const gameIds = state.map(g => g._id)
       if (gameIds.indexOf(payload._id) < 0) {
@@ -31,6 +33,7 @@ export default (state = [], { type, payload } = {}) => {
     case GAME_UPDATED :
       return state.map((game) => {
         if (game._id === payload._id) {
+          console.log("GAME_UPDATED reducers " + payload.board)
           return { ...payload }
         }
         return game
